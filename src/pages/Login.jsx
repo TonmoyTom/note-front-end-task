@@ -3,9 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Card, Form, Input, Select, message } from 'antd';
 import { api } from '../api';
 
+const DEMO_EMAIL = import.meta.env.VITE_DEMO_EMAIL;
+const DEMO_PASSWORD = import.meta.env.VITE_DEMO_PASSWORD;
+
 export default function Login() {
   const [mode, setMode] = useState('login');
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
   const navigate = useNavigate();
 
   async function submit(values) {
@@ -25,9 +29,14 @@ export default function Login() {
     }
   }
 
+  function fillDemo() {
+    setMode('login');
+    form.setFieldsValue({ email: DEMO_EMAIL, password: DEMO_PASSWORD });
+  }
+
   return (
     <Card title={mode === 'login' ? 'Login' : 'Register'} style={{ maxWidth: 400, margin: '60px auto' }}>
-      <Form layout="vertical" onFinish={submit} key={mode}>
+      <Form form={form} layout="vertical" onFinish={submit}>
         {mode === 'register' && (
           <Form.Item name="name" label="Name" rules={[{ required: true }]}>
             <Input />
@@ -48,6 +57,13 @@ export default function Login() {
           {mode === 'login' ? 'Login' : 'Register'}
         </Button>
       </Form>
+
+      {mode === 'login' && DEMO_EMAIL && (
+        <Button onClick={fillDemo} block style={{ marginTop: 8 }}>
+          Fill demo admin
+        </Button>
+      )}
+
       <Button type="link" onClick={() => setMode(mode === 'login' ? 'register' : 'login')} style={{ marginTop: 8 }}>
         {mode === 'login' ? 'Need an account? Register' : 'Have an account? Login'}
       </Button>
